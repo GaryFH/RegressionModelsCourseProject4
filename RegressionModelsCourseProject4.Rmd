@@ -1,0 +1,124 @@
+---
+title: "RegressionModelsCourseProject4"
+author: "GaryFH"
+date: "May 2, 2017"
+output: mp_document
+
+#OVERVIEW
+#### You work for Motor Trend, a magazine about the automobile industry. Looking at a data set of a collection of cars, they are interested in exploring the relationship between a set of variables and miles per gallon (MPG) (outcome). They are particularly interested in the following two questions: 
+###1) “Is an automatic or manual transmission better for MPG”
+###2) "Quantify the MPG difference between automatic and manual transmissions" 
+
+###setup
+```{r, echo=FALSE }
+library(datasets)
+library(ggplot2)
+library(dplyr)
+
+```
+
+###first look
+
+
+```{r firstlook}
+
+data(mtcars)
+df1<-tbl_df(mtcars)
+summary(df1)
+df1
+df2<-filter(df1,am==0)
+df3<-filter(df1,am==1)
+df2
+df3
+
+```
+
+###look at scatterplot with linear regression smoother   g<- ggplot(df1,aes(x=hp,y=mpg))+
+        geom_point(aes(color=as.factor(am)),alpha=.2)+
+        geom_smooth(color="dark red")
+
+```{r plot1}
+
+
+g1<- ggplot()+
+        geom_point(aes(x=df2$hp,y=df2$mpg),color="red",alpha=.6)+
+        geom_smooth(aes(x=df2$hp,y=df2$mpg),method="lm",color="dark red",se=F)+
+        geom_point(aes(x=df3$hp,y=df3$mpg),color="darkgreen",alpha=.8)+
+        geom_smooth(aes(x=df3$hp,y=df3$mpg),method="lm",color="dark green",se=F)+
+        labs(title="Effect of Transmission type & Horse Power vrs MPG")+
+        labs(subtitle="Red=AutoTransmission ; Green=Manual Transmission")+
+        labs(x="Horse Power (Red=AutoTransmission ; Green=Manual Transmission)",y="Miles per Gallon")
+g1       
+        
+g2<- ggplot()+
+        geom_point(aes(x=df2$disp,y=df2$mpg),color="red",alpha=.6)+
+        geom_smooth(aes(x=df2$disp,y=df2$mpg),method="lm",color="dark red",se=F)+
+        geom_point(aes(x=df3$disp,y=df3$mpg),color="darkgreen",alpha=.8)+
+        geom_smooth(aes(x=df3$disp,y=df3$mpg),method="lm",color="dark green",se=F)+
+        labs(title="Effect of Transmission type & Engine displacement vrs MPG")+
+        labs(subtitle="Red=AutoTransmission ; Green=Manual Transmission")+
+        labs(x="Engine displacement (Red=AutoTransmission ; Green=Manual Transmission)",y="Miles per Gallon")
+g2  
+
+g3<- ggplot()+
+        geom_point(aes(x=df2$wt,y=df2$mpg),color="red",alpha=.6)+
+        geom_smooth(aes(x=df2$wt,y=df2$mpg),method="lm",color="dark red",se=F)+
+        geom_point(aes(x=df3$wt,y=df3$mpg),color="darkgreen",alpha=.8)+
+        geom_smooth(aes(x=df3$wt,y=df3$mpg),method="lm",color="dark green",se=F)+
+        labs(title="Effect of Transmission type & Weight of car vrs MPG")+
+        labs(subtitle="Red=AutoTransmission ; Green=Manual Transmission")+
+        labs(x="Weight of Car (Red=AutoTransmission ; Green=Manual Transmission)" ,y="Miles per Gallon")
+g3  
+ 
+```  
+
+###Lets look at average mpg per average weight for auto vrs manual transmissions
+
+```{r ratios}
+avgauto<-round((mean(df2$mpg)*10)/mean(df2$hp),5)
+avgman<-round((mean(df3$mpg)*10)/mean(df3$hp),5)
+a1<-c("Auto mpg/hp",avgauto,"vrs","Man mpg/hp",avgman)
+avgauto2<-round((mean(df2$mpg)*10)/mean(df2$disp),5)
+avgman2<-round((mean(df3$mpg)*10)/mean(df3$disp),5)
+a2<-c("Auto mpg/disp",avgauto2,"vrs","Man mpg/disp",avgman2)
+avgauto3<-round((mean(df2$mpg)*10)/mean(df2$wt),5)
+avgman3<-round((mean(df3$mpg)*10)/mean(df3$wt),5)
+a3<-c("Auto mpg/wt",avgauto3,"vrs","Man mpg/wt",avgman3)
+
+a1
+a2
+a3
+
+```
+
+###Assuming that mpg is impacted by hp, engine displacement and weight - the above ratios of mpg/hp, mpg/disp and mpg/wt for cars with automatic transmissions vrs cars with manual transmitions would clearly indicate that the cars tested with manual transmissions have significantly better mpg than the cars tested with auto transmissions.   The following code provides the percentage difference (how much better mpg does the manual get vrs the auto in percentage) between manual and auto transmissions based as follows:  
+###1) mpg for manual transmissions are 79.7% higher than for auto transmissions adjusted for differences in horse power.  
+
+###2) mpg for manual transmissions are 187.8% higher than for auto transmissions adjusted for differences in engine displacement.  
+
+###3) mpg for manual transmissions are 122.4% higher than for auto transmissions adjusted for differences in weight.
+
+```{r ratios2}
+mpg_hp<-round((avgman-avgauto)/avgauto,3)
+
+mpg_disp<-round((avgman2-avgauto2)/avgauto2,3)
+
+mpg_wt<-round((avgman3-avgauto3)/avgauto3,3)
+
+c("Percentage higher avg mpg for manual vrs auto adjusted for hp",mpg_hp*100)
+
+c("Percentage higher avg mpg for manual vrs auto adjusted for disp",mpg_disp*100)
+
+c("Percentage higher avg mpg for manual vrs auto adjusted for wt",mpg_wt*100)
+```
+
+
+
+
+
+
+
+
+
+
+
