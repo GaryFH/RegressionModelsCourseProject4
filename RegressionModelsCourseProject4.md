@@ -55,6 +55,15 @@ Note that since automatic transmissions are often standard on large(weight), pow
 
 ![](RegressionModelsCourseProject4_files/figure-markdown_strict/boxplot-1.png)
 
+    ##or ggplot 
+    gg<-ggplot(df1,aes(x=am,y=mpg))+geom_boxplot(aes(group=am),color=c("red","dark green"),fill=c("yellow","magenta"))+
+    labs(x="Yellow is Automatic Transmission and Magenta is Manual Transmission")+
+    labs(subtitle="Boxplot showing mpg for manual vrs automatic transmissions")+
+    labs(title="Yellow is Automatic Transmission and Magenta is Manual Transmission")
+    gg
+
+![](RegressionModelsCourseProject4_files/figure-markdown_strict/boxplot-2.png)
+
 #### The above boxplot shows that of the cars tested, manual transmissions have significantly higher mpg ratings than automatic transmissions.
 
 ### Next lets look at scatterplots with linear regression smoothers with hp, disp & weight vrs mpg - each plot will compare between auto and manual transmissions (df2 and df3 databases).

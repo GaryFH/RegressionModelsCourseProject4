@@ -2,7 +2,7 @@
 title: "RegressionModelsCourseProject4"
 author: "GaryFH"
 date: "May 2, 2017"
-output: pdf_document
+output: md_document
 ---
 
 #OVERVIEW
@@ -36,6 +36,12 @@ df1
 
 ```{r boxplot}
 boxplot(mpg ~ am, data = mtcars, col = (c("magenta","green")), ylab = "mpg", xlab = "Type of Transmission")
+##or ggplot 
+gg<-ggplot(df1,aes(x=am,y=mpg))+geom_boxplot(aes(group=am),color=c("red","dark green"),fill=c("yellow","magenta"))+
+labs(x="Yellow is Automatic Transmission and Magenta is Manual Transmission")+
+labs(subtitle="Boxplot showing mpg for manual vrs automatic transmissions")+
+labs(title="Yellow is Automatic Transmission and Magenta is Manual Transmission")
+gg
 ```
 
 #### The above boxplot shows that of the cars tested,  manual transmissions have significantly higher mpg ratings than automatic transmissions. 
