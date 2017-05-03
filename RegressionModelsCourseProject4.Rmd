@@ -2,13 +2,13 @@
 title: "RegressionModelsCourseProject4"
 author: "GaryFH"
 date: "May 2, 2017"
-output: md_document
+output: pdf_document
+---
 
 #OVERVIEW
 #### You work for Motor Trend, a magazine about the automobile industry. Looking at a data set of a collection of cars, they are interested in exploring the relationship between a set of variables and miles per gallon (MPG) (outcome). They are particularly interested in the following two questions: 
 ###1) “Is an automatic or manual transmission better for MPG”
 ###2) "Quantify the MPG difference between automatic and manual transmissions" 
-
 
 
 ###setup
@@ -26,13 +26,10 @@ library(dplyr)
 
 data(mtcars)
 df1<-tbl_df(mtcars)
-summary(df1)
-df1
 df2<-filter(df1,am==0)
 df3<-filter(df1,am==1)
-df2
-df3
 
+df1
 ```
 
 ## Note that since automatic transmissions are often standard on large(weight), powerful(hp) cars with big engines(disp) and manual transmission are often common on small basic under powered cars - that just looking at cars with automatic transmissions vrs manual transmissions could be misleading.   Therefore I adjusted for differences in horse power,  engine displacement and overall car weight.   The assumption that mpg is impacted by hp, engine displacement and weight was tested and confirmed below.  First let's look at a simple boxplot of mpg vrs transmission type (no adjustments for other factors).
@@ -102,12 +99,12 @@ a3
 
 ```
 
-### The above ratios of mpg/hp, mpg/disp and mpg/wt for cars with automatic transmissions vrs cars with manual transmitions would clearly indicate that the cars tested with manual transmissions have significantly better mpg than the cars tested with auto transmissions.   The following code provides the percentage difference (how much better mpg does the manual get vrs the auto in percentage) between manual and auto transmissions based as follows:  
-##1) mpg for manual transmissions are 79.7% higher than for auto transmissions adjusted for differences in horse power.  
+#### The above ratios of mpg/hp, mpg/disp and mpg/wt for cars with automatic transmissions vrs cars with manual transmitions would clearly indicate that the cars tested with manual transmissions have significantly better mpg than the cars tested with auto transmissions.   The following code provides the percentage difference (how much better mpg does the manual get vrs the auto in percentage) between manual and auto transmissions based as follows:  
+###1) mpg for manual transmissions are 79.7% higher than for auto transmissions adjusted for differences in horse power.  
 
-##2) mpg for manual transmissions are 187.8% higher than for auto transmissions adjusted for differences in engine displacement.  
+###2) mpg for manual transmissions are 187.8% higher than for auto transmissions adjusted for differences in engine displacement.  
 
-##3) mpg for manual transmissions are 122.4% higher than for auto transmissions adjusted for differences in weight.
+###3) mpg for manual transmissions are 122.4% higher than for auto transmissions adjusted for differences in weight.
 
 ```{r ratios2}
 mpg_hp<-round((avgman-avgauto)/avgauto,3)
@@ -122,6 +119,51 @@ c("Percentage higher avg mpg for manual vrs auto adjusted for disp",mpg_disp*100
 
 c("Percentage higher avg mpg for manual vrs auto adjusted for wt",mpg_wt*100)
 ```
+
+
+## The assignment made the following statements:
+### 1) When measuring MPG, manual transmissions perform better than automatic transmissions by 7.25MPG, however this single factor only accounts for 36% of the explanation
+
+### 2) When measuring MPG, manual transmissions provide an additional 1.48MPG of performance over automatic transmissions when taking into account three additonal explanatory variables (cylinders, horsepower & weight), these additional factors account for 85% of the explanation
+
+### Let's look at the above statements:
+
+```{r statement1}
+statement1<-mean(df3$mpg)-mean(df2$mpg)
+statement1
+
+man<-lm(mpg~cyl+hp+wt,df3)
+auto<-lm(mpg~cyl+hp+wt,df2)
+summary(man)
+summary(auto)
+```
+###The statements appear to be true
+
+
+# Synopsis
+
+#### The addendum summaries show that for hp, wt and disp there is strong evidence that mpg goes down as each of the above increase -  the trends are not significantly impacted when the transmission type is included in the regression model.   Note that including all the variables seems to produce a lot of "noise" making the results less useful. Therefore the assumptions are support and the results shown above and copied here are supported:
+
+###1) mpg for manual transmissions are 79.7% higher than for auto transmissions adjusted for differences in horse power.  
+
+###2) mpg for manual transmissions are 187.8% higher than for auto transmissions adjusted for differences in engine displacement.  
+
+###3) mpg for manual transmissions are 122.4% higher than for auto transmissions adjusted for differences in weight. 
+
+
+#Addendum
+
+
+### Initial data summaries
+
+```{r initial summaries}
+summary(df1)
+df1
+df2
+df3
+```
+
+
 
 ## Test assumptions
 #### Note that the above generated conclusions (showing manual transmissions having significantly higher mpg than automatic transmissions) is based upon the mpg being related to the variables horsepower, engine displacement and car weight.  Lets test these assumptions:
@@ -148,39 +190,10 @@ summary(fit5)
 summary(fit6)
 ```
 
-# Synopsis
-
-#### The coefficient t-value is a measure of how many standard deviations our coefficient estimate is far away from 0. We want it to be far away from zero as this would indicate we could reject the null hypothesis - that is, we could declare a relationship between hp,disp & wt and y exist. In our example, the t-statistic values are relatively far away from zero and are large relative to the standard error, which could indicate a relationship exists. In general, t-values are also used to compute p-values.
+#### See addendum for summaries of various linear regression models.  The coefficient t-value is a measure of how many standard deviations our coefficient estimate is far away from 0. We want it to be far away from zero as this would indicate we could reject the null hypothesis - that is, we could declare a relationship between hp,disp & wt and y exist. In our example, the t-statistic values are relatively far away from zero and are large relative to the standard error, which could indicate a relationship exists. In general, t-values are also used to compute p-values.
 
 #### F-statistic is a good indicator of whether there is a relationship between our predictor and the response variables. The further the F-statistic is from 1 the better it is. However, how much larger the F-statistic needs to be depends on both the number of data points and the number of predictors. Generally, when the number of data points is large, an F-statistic that is only a little bit larger than 1 is already sufficient to reject the null hypothesis (H0 : There is no relationship between x and y). The reverse is true as if the number of data points is small, a large F-statistic is required to be able to ascertain that there may be a relationship between predictor and response variables. In our example the F-statistic vary from 39 to 92 which are relatively larger than 1 given the size of our data.
 
-#### The above summaries show that for hp, wt and disp there is strong evidence that mpg goes down as each of the above increase -  the trends are not significantly impacted when the transmission type is included in the regression model.   Note that including all the variables seems to produce a lot of "noise" making the results less useful. Therefore the assumptions are support and the results shown above and copied here are supported:
-
-##1) mpg for manual transmissions are 79.7% higher than for auto transmissions adjusted for differences in horse power.  
-
-##2) mpg for manual transmissions are 187.8% higher than for auto transmissions adjusted for differences in engine displacement.  
-
-##3) mpg for manual transmissions are 122.4% higher than for auto transmissions adjusted for differences in weight. 
-
-
-
-## The assignment made the following statements:
-### 1) When measuring MPG, manual transmissions perform better than automatic transmissions by 7.25MPG, however this single factor only accounts for 36% of the explanation
-
-### 2) When measuring MPG, manual transmissions provide an additional 1.48MPG of performance over automatic transmissions when taking into account three additonal explanatory variables (cylinders, horsepower & weight), these additional factors account for 85% of the explanation
-
-### Let's look at the above statements:
-
-```{r statement1}
-statement1<-mean(df3$mpg)-mean(df2$mpg)
-statement1
-
-man<-lm(mpg~cyl+hp+wt,df3)
-auto<-lm(mpg~cyl+hp+wt,df2)
-summary(man)
-summary(auto)
-```
-###The statements appear to be true
 
 
 
